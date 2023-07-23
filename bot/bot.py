@@ -43,27 +43,27 @@ user_semaphores = {}
 user_tasks = {}
 
 HELP_MESSAGE = """Commands:
-⚪ /retry – Regenerate last bot answer
-⚪ /new – Start new dialog
-⚪ /mode – Select chat mode
-⚪ /settings – Show settings
-⚪ /balance – Show balance
-⚪ /help – Show help
+⚪ /retry – 봇의 마지막 답변 재생성
+⚪ /new – 새 대화
+⚪ /mode – 챗 모드 선택
+⚪ /settings – 설정보기
+⚪ /balance – 비용보기
+⚪ /help – 도움말
 
-🎨 Generate images from text prompts in <b>👩‍🎨 Artist</b> /mode
-👥 Add bot to <b>group chat</b>: /help_group_chat
-🎤 You can send <b>Voice Messages</b> instead of text
+🎨 텍스트 프롬프트에서 이미지를 생성하려면 <b>👩‍🎨 Artist</b> /mode
+👥 <b>그룹 채팅</b>에 봇 추가: /help_group_chat
+🎤 문자 대신 <b>음성 메시지</b>으로도 이용 가능.
 """
 
-HELP_GROUP_CHAT_MESSAGE = """You can add bot to any <b>group chat</b> to help and entertain its participants!
+HELP_GROUP_CHAT_MESSAGE = """모든 <b>그룹 채팅</b>에 봇을 추가하여 참가자를 돕고 즐겁게 할 수 있습니다!
 
-Instructions (see <b>video</b> below):
-1. Add the bot to the group chat
-2. Make it an <b>admin</b>, so that it can see messages (all other rights can be restricted)
-3. You're awesome!
+지침(아래 <b>동영상</b> 참조):
+1. 그룹 채팅에 봇 추가
+2. 메시지를 볼 수 있도록 <b>관리자</b>로 지정합니다(다른 모든 권한은 제한될 수 있음).
+3. 굉장합니다!
 
-To get a reply from the bot in the chat – @ <b>tag</b> it or <b>reply</b> to its message.
-For example: "{bot_username} write a poem about Telegram"
+채팅에서 봇의 답장을 받으려면 @ <b>태그</b>하거나 메시지에 <b>답장</b>하세요.
+예: "{bot_username}님이 Telegram에 대해 시를 씁니다.""
 """
 
 
@@ -138,7 +138,7 @@ async def start_handle(update: Update, context: CallbackContext):
     db.set_user_attribute(user_id, "last_interaction", datetime.now())
     db.start_new_dialog(user_id)
 
-    reply_text = "Hi! I'm <b>ChatGPT</b> bot implemented with OpenAI API 🤖\n\n"
+    reply_text = "OpenAI API로 구현된 <b>ChatGPT</b> 봇입니다. 🤖\n\n"
     reply_text += HELP_MESSAGE
 
     await update.message.reply_text(reply_text, parse_mode=ParseMode.HTML)
@@ -212,7 +212,7 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
         if use_new_dialog_timeout:
             if (datetime.now() - db.get_user_attribute(user_id, "last_interaction")).seconds > config.new_dialog_timeout and len(db.get_dialog_messages(user_id)) > 0:
                 db.start_new_dialog(user_id)
-                await update.message.reply_text(f"Starting new dialog due to timeout (<b>{config.chat_modes[chat_mode]['name']}</b> mode) ✅", parse_mode=ParseMode.HTML)
+                await update.message.reply_text(f"시간초과로 새대화 시작 (<b>{config.chat_modes[chat_mode]['name']}</b> mode) ✅", parse_mode=ParseMode.HTML)
         db.set_user_attribute(user_id, "last_interaction", datetime.now())
 
         # in case of CancelledError
@@ -227,7 +227,7 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
             await update.message.chat.send_action(action="typing")
 
             if _message is None or len(_message) == 0:
-                 await update.message.reply_text("🥲 You sent <b>empty message</b>. Please, try again!", parse_mode=ParseMode.HTML)
+                 await update.message.reply_text("🥲 <b>빈 메시지</b>를 보냈습니다. 다시 시도하세요.", parse_mode=ParseMode.HTML)
                  return
 
             dialog_messages = db.get_dialog_messages(user_id, dialog_id=None)
@@ -264,7 +264,7 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
                 try:
                     await context.bot.edit_message_text(answer, chat_id=placeholder_message.chat_id, message_id=placeholder_message.message_id, parse_mode=parse_mode)
                 except telegram.error.BadRequest as e:
-                    if str(e).startswith("Message is not modified"):
+                    if str(e).startswith("메시지가 수정되지 않음"):
                         continue
                     else:
                         await context.bot.edit_message_text(answer, chat_id=placeholder_message.chat_id, message_id=placeholder_message.message_id)
@@ -289,7 +289,7 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
             raise
 
         except Exception as e:
-            error_text = f"Something went wrong during completion. Reason: {e}"
+            error_text = f"완료하는 동안 문제가 발생했습니다. Reason: {e}"
             logger.error(error_text)
             await update.message.reply_text(error_text)
             return
@@ -297,9 +297,9 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
         # send message if some messages were removed from the context
         if n_first_dialog_messages_removed > 0:
             if n_first_dialog_messages_removed == 1:
-                text = "✍️ <i>Note:</i> Your current dialog is too long, so your <b>first message</b> was removed from the context.\n Send /new command to start new dialog"
+                text = "✍️ <i>Note:</i> 현재 대화가 너무 길어서 <b>첫 번째 메시지</b>가 컨텍스트에서 제거되었습니다.\n 새 대화를 시작하려면 /new 명령을 보내십시오."
             else:
-                text = f"✍️ <i>Note:</i> Your current dialog is too long, so <b>{n_first_dialog_messages_removed} first messages</b> were removed from the context.\n Send /new command to start new dialog"
+                text = f"✍️ <i>Note:</i> 현재 대화가 너무 깁니다. 따라서 <b>{n_first_dialog_messages_removed}개의 첫 번째 메시지</b>가 컨텍스트에서 제거되었습니다.\n 새 대화 상자를 시작하려면 /new 명령을 보내십시오."
             await update.message.reply_text(text, parse_mode=ParseMode.HTML)
 
     async with user_semaphores[user_id]:
@@ -322,8 +322,8 @@ async def is_previous_message_not_answered_yet(update: Update, context: Callback
 
     user_id = update.message.from_user.id
     if user_semaphores[user_id].locked():
-        text = "⏳ Please <b>wait</b> for a reply to the previous message\n"
-        text += "Or you can /cancel it"
+        text = "⏳ P이전 메시지에 대한 답장을 <b>기다려</b> 주십시오.\n"
+        text += "또는 /cancel 할수 있습니다."
         await update.message.reply_text(text, reply_to_message_id=update.message.id, parse_mode=ParseMode.HTML)
         return True
     else:
@@ -384,8 +384,8 @@ async def generate_image_handle(update: Update, context: CallbackContext, messag
     try:
         image_urls = await openai_utils.generate_images(message, n_images=config.return_n_generated_images)
     except openai.error.InvalidRequestError as e:
-        if str(e).startswith("Your request was rejected as a result of our safety system"):
-            text = "🥲 Your request <b>doesn't comply</b> with OpenAI's usage policies.\nWhat did you write there, huh?"
+        if str(e).startswith("안전 시스템으로 인해 귀하의 요청이 거부되었습니다"):
+            text = "🥲 귀하의 요청은 OpenAI의 사용 정책을 <b>준수하지 않습니다</b>.\n무얼 요청한거죠??? "
             await update.message.reply_text(text, parse_mode=ParseMode.HTML)
             return
         else:
