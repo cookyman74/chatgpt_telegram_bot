@@ -1,0 +1,51 @@
+current_language: 'kr'
+
+en :
+  HELP_MESSAGE: |
+    Commands:
+    ⚪ /retry – Regenerate last bot answer
+    ⚪ /new – Start new dialog
+    ⚪ /mode – Select chat mode
+    ⚪ /settings – Show settings
+    ⚪ /balance – Show balance
+    ⚪ /help – Show help
+    
+    🎨 Generate images from text prompts in <b>👩‍🎨 Artist</b> /mode
+    👥 Add bot to <b>group chat</b>: /help_group_chat
+    🎤 You can send <b>Voice Messages</b> instead of text
+
+kr :
+  HELP_MESSAGE : |
+    명령어:
+    ⚪ /retry – 봇의 마지막 답변 재생성
+    ⚪ /new – 새 대화
+    ⚪ /mode – 챗 모드 선택
+    ⚪ /settings – 설정보기
+    ⚪ /balance – 비용보기
+    ⚪ /help – 도움말
+
+    🎨 텍스트 프롬프트에서 이미지를 생성하려면 <b>👩‍🎨 Artist</b> /mode
+    👥 <b>그룹 채팅</b>에 봇 추가: /help_group_chat
+    🎤 문자 대신 <b>음성 메시지</b>으로도 이용 가능.
+  HELP_GROUP_CHAT_MESSAGE : |
+    모든 <b>그룹 채팅</b>에 봇을 추가하여 참가자를 돕고 즐겁게 할 수 있습니다!
+
+    지침(아래 <b>동영상</b> 참조):
+    1. 그룹 채팅에 봇 추가
+    2. 메시지를 볼 수 있도록 <b>관리자</b>로 지정합니다(다른 모든 권한은 제한될 수 있음).
+    3. 굉장합니다!
+
+    채팅에서 봇의 답장을 받으려면 @ <b>태그</b>하거나 메시지에 <b>답장</b>하세요.
+    예: "{bot_username}님이 Telegram에 대해 시를 씁니다.""
+  HI_MESSAGE: OpenAI API로 구현된 <b>ChatGPT</b> 봇입니다. 🤖\n\n
+  TIMEOUT_MESSAGE : 시간 초과로 새 대화 시작
+  EMPTY_RETRY_MESSAGE : 🥲 <b>빈 메시지</b>를 보냈습니다. 다시 시도하세요.
+  FAILED_EDIT_MESSAGE : 메시지가 수정되지 않음
+  INPUT_ERR_MESSAGE : 어떤 원인으로 완료하는 동안 문제가 발생했습니다.
+  ERR_TOOLONG_MESSAGE : <i>주의:</i> 현재 대화가 너무 깁니다.
+  FIRST_DELETE_MESSAGE : <b>첫 번째 메시지</b>가 컨텍스트에서 제거되었습니다.\n 
+  NFIRST_DELETE_MESSAGE : 개의 첫 번째 메시지</b>가 컨텍스트에서 제거되었습니다.\n
+  NEW_DIALOG_MESSAGE : 새 대화를 시작하려면 /new 명령을 실행하세요.
+  CANCEL_MESSAGE : ✅ 취소되었습니다
+  NOTHING_CANCEL_MESSAGE : <i>취소할 것이 없습니다....</i>
+  START_DIALOG_MESSAGE : 새 대화를 시작합니다. ✅

@@ -1,3 +1,4 @@
+
 import os
 import logging
 import asyncio
@@ -42,29 +43,9 @@ logger = logging.getLogger(__name__)
 user_semaphores = {}
 user_tasks = {}
 
-HELP_MESSAGE = """Commands:
-⚪ /retry – 봇의 마지막 답변 재생성
-⚪ /new – 새 대화
-⚪ /mode – 챗 모드 선택
-⚪ /settings – 설정보기
-⚪ /balance – 비용보기
-⚪ /help – 도움말
+HELP_MESSAGE = f"{config.help_msg}"
 
-🎨 텍스트 프롬프트에서 이미지를 생성하려면 <b>👩‍🎨 Artist</b> /mode
-👥 <b>그룹 채팅</b>에 봇 추가: /help_group_chat
-🎤 문자 대신 <b>음성 메시지</b>으로도 이용 가능.
-"""
-
-HELP_GROUP_CHAT_MESSAGE = """모든 <b>그룹 채팅</b>에 봇을 추가하여 참가자를 돕고 즐겁게 할 수 있습니다!
-
-지침(아래 <b>동영상</b> 참조):
-1. 그룹 채팅에 봇 추가
-2. 메시지를 볼 수 있도록 <b>관리자</b>로 지정합니다(다른 모든 권한은 제한될 수 있음).
-3. 굉장합니다!
-
-채팅에서 봇의 답장을 받으려면 @ <b>태그</b>하거나 메시지에 <b>답장</b>하세요.
-예: "{bot_username}님이 Telegram에 대해 시를 씁니다.""
-"""
+HELP_GROUP_CHAT_MESSAGE = f"{config.help_group_chat_msg}"
 
 
 def split_text_into_chunks(text, chunk_size):
@@ -138,7 +119,7 @@ async def start_handle(update: Update, context: CallbackContext):
     db.set_user_attribute(user_id, "last_interaction", datetime.now())
     db.start_new_dialog(user_id)
 
-    reply_text = "OpenAI API로 구현된 <b>ChatGPT</b> 봇입니다. 🤖\n\n"
+    reply_text = f"{config.hi_msg}"
     reply_text += HELP_MESSAGE
 
     await update.message.reply_text(reply_text, parse_mode=ParseMode.HTML)
@@ -212,7 +193,7 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
         if use_new_dialog_timeout:
             if (datetime.now() - db.get_user_attribute(user_id, "last_interaction")).seconds > config.new_dialog_timeout and len(db.get_dialog_messages(user_id)) > 0:
                 db.start_new_dialog(user_id)
-                await update.message.reply_text(f"시간초과로 새대화 시작 (<b>{config.chat_modes[chat_mode]['name']}</b> mode) ✅", parse_mode=ParseMode.HTML)
+                await update.message.reply_text(f"{config.timeout_msg}(<b>{config.chat_modes[chat_mode]['name']}</b> mode) ✅", parse_mode=ParseMode.HTML)
         db.set_user_attribute(user_id, "last_interaction", datetime.now())
 
         # in case of CancelledError
@@ -227,7 +208,7 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
             await update.message.chat.send_action(action="typing")
 
             if _message is None or len(_message) == 0:
-                 await update.message.reply_text("🥲 <b>빈 메시지</b>를 보냈습니다. 다시 시도하세요.", parse_mode=ParseMode.HTML)
+                 await update.message.reply_text(f"{config.empty_retry_msg}", parse_mode=ParseMode.HTML)
                  return
 
             dialog_messages = db.get_dialog_messages(user_id, dialog_id=None)
@@ -264,7 +245,7 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
                 try:
                     await context.bot.edit_message_text(answer, chat_id=placeholder_message.chat_id, message_id=placeholder_message.message_id, parse_mode=parse_mode)
                 except telegram.error.BadRequest as e:
-                    if str(e).startswith("메시지가 수정되지 않음"):
+                    if str(e).startswith(f"{config.failed_edit_msg}"):
                         continue
                     else:
                         await context.bot.edit_message_text(answer, chat_id=placeholder_message.chat_id, message_id=placeholder_message.message_id)
@@ -289,7 +270,7 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
             raise
 
         except Exception as e:
-            error_text = f"완료하는 동안 문제가 발생했습니다. Reason: {e}"
+            error_text = f"{config.input_err_msg} : {e}"
             logger.error(error_text)
             await update.message.reply_text(error_text)
             return
@@ -297,9 +278,9 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
         # send message if some messages were removed from the context
         if n_first_dialog_messages_removed > 0:
             if n_first_dialog_messages_removed == 1:
-                text = "✍️ <i>Note:</i> 현재 대화가 너무 길어서 <b>첫 번째 메시지</b>가 컨텍스트에서 제거되었습니다.\n 새 대화를 시작하려면 /new 명령을 보내십시오."
+                text = f"✍ {config.err_toolong_msg} {config.first_delete_msg} {config.new_dialog_msg}"
             else:
-                text = f"✍️ <i>Note:</i> 현재 대화가 너무 깁니다. 따라서 <b>{n_first_dialog_messages_removed}개의 첫 번째 메시지</b>가 컨텍스트에서 제거되었습니다.\n 새 대화 상자를 시작하려면 /new 명령을 보내십시오."
+                text = f"✍ {config.err_toolong_msg} <b>{n_first_dialog_messages_removed}{config.n_first_delete_msg} {config.new_dialog_msg}"
             await update.message.reply_text(text, parse_mode=ParseMode.HTML)
 
     async with user_semaphores[user_id]:
@@ -309,7 +290,7 @@ async def message_handle(update: Update, context: CallbackContext, message=None,
         try:
             await task
         except asyncio.CancelledError:
-            await update.message.reply_text("✅ Canceled", parse_mode=ParseMode.HTML)
+            await update.message.reply_text(f"{config.cancel_msg}", parse_mode=ParseMode.HTML)
         else:
             pass
         finally:
@@ -407,7 +388,7 @@ async def new_dialog_handle(update: Update, context: CallbackContext):
     db.set_user_attribute(user_id, "last_interaction", datetime.now())
 
     db.start_new_dialog(user_id)
-    await update.message.reply_text("Starting new dialog ✅")
+    await update.message.reply_text(f"{config.start_dialog_msg}")
 
     chat_mode = db.get_user_attribute(user_id, "current_chat_mode")
     await update.message.reply_text(f"{config.chat_modes[chat_mode]['welcome_message']}", parse_mode=ParseMode.HTML)
@@ -423,7 +404,7 @@ async def cancel_handle(update: Update, context: CallbackContext):
         task = user_tasks[user_id]
         task.cancel()
     else:
-        await update.message.reply_text("<i>Nothing to cancel...</i>", parse_mode=ParseMode.HTML)
+        await update.message.reply_text(f"{config.nothing_cancel_msg}", parse_mode=ParseMode.HTML)
 
 
 def get_chat_mode_menu(page_index: int):

@@ -31,3 +31,24 @@ with open(config_dir / "models.yml", 'r') as f:
 
 # files
 help_group_chat_video_path = Path(__file__).parent.parent.resolve() / "static" / "help_group_chat.mp4"
+
+
+# 언어설정
+with open(config_dir / "language.yml", 'r') as f:
+    language_yaml = yaml.safe_load(f)
+
+current_language = language_yaml["current_language"]
+help_msg = language_yaml[current_language]["HELP_MESSAGE"]
+help_group_chat_msg = language_yaml[current_language]["HELP_GROUP_CHAT_MESSAGE"]
+hi_msg = language_yaml[current_language]["HI_MESSAGE"]
+timeout_msg = language_yaml[current_language]["TIMEOUT_MESSAGE"]
+empty_retry_msg = language_yaml[current_language]["EMPTY_RETRY_MESSAGE"]
+failed_edit_msg = language_yaml[current_language]["FAILED_EDIT_MESSAGE"]
+input_err_msg = language_yaml[current_language]["INPUT_ERR_MESSAGE"]
+err_toolong_msg = language_yaml[current_language]["ERR_TOOLONG_MESSAGE"]
+first_delete_msg = language_yaml[current_language]["FIRST_DELETE_MESSAGE"]
+n_first_delete_msg = language_yaml[current_language]["NFIRST_DELETE_MESSAGE"]
+new_dialog_msg = language_yaml[current_language]["NEW_DIALOG_MESSAGE"]
+cancel_msg = language_yaml[current_language]["CANCEL_MESSAGE"]
+nothing_cancel_msg = language_yaml[current_language]["NOTHING_CANCEL_MESSAGE"]
+start_dialog_msg = language_yaml[current_language]["START_DIALOG_MESSAGE"]
