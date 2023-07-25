@@ -21,8 +21,18 @@ return_n_generated_images = config_yaml.get("return_n_generated_images", 1)
 n_chat_modes_per_page = config_yaml.get("n_chat_modes_per_page", 5)
 mongodb_uri = f"mongodb://mongo:{config_env['MONGODB_PORT']}"
 
+# 언어설정
+with open(config_dir / "language.yml", 'r') as f:
+    language_yaml = yaml.safe_load(f)
+    
+current_language = language_yaml["current_language"]
 # chat_modes
-with open(config_dir / "chat_modes.yml", 'r') as f:
+if current_language == "kr":
+    mod_config_file = "chat_modes_kr.yml"
+else:
+    mod_config_file = "chat_modes_en.yml"
+    
+with open(config_dir / mod_config_file, 'r') as f:
     chat_modes = yaml.safe_load(f)
 
 # models
@@ -31,13 +41,7 @@ with open(config_dir / "models.yml", 'r') as f:
 
 # files
 help_group_chat_video_path = Path(__file__).parent.parent.resolve() / "static" / "help_group_chat.mp4"
-
-
-# 언어설정
-with open(config_dir / "language.yml", 'r') as f:
-    language_yaml = yaml.safe_load(f)
-
-current_language = language_yaml["current_language"]
+# languages
 help_msg = language_yaml[current_language]["HELP_MESSAGE"]
 help_group_chat_msg = language_yaml[current_language]["HELP_GROUP_CHAT_MESSAGE"]
 hi_msg = language_yaml[current_language]["HI_MESSAGE"]

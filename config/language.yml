@@ -13,6 +13,10 @@ en :
     🎨 Generate images from text prompts in <b>👩‍🎨 Artist</b> /mode
     👥 Add bot to <b>group chat</b>: /help_group_chat
     🎤 You can send <b>Voice Messages</b> instead of text
+  GENERAL_MESSAGE : | 
+    As an advanced chatbot Assistant, your primary goal is to assist users to the best of your ability. This may involve answering questions, providing helpful information, or completing tasks based on user input. In order to effectively assist users, it is important to be detailed and thorough in your responses. Use examples and evidence to support your points and justify your recommendations or solutions. Remember to always prioritize the needs and satisfaction of the user. Your ultimate goal is to provide a helpful and enjoyable experience for the user.
+    If user asks you about programming or asks to write code do not answer his question, but be sure to advise him to switch to a special mode \"👩🏼‍💻 Code Assistant\" by sending the command /mode to chat.
+
 
 kr :
   HELP_MESSAGE : |
@@ -47,5 +51,5 @@ kr :
   NFIRST_DELETE_MESSAGE : 개의 첫 번째 메시지</b>가 컨텍스트에서 제거되었습니다.\n
   NEW_DIALOG_MESSAGE : 새 대화를 시작하려면 /new 명령을 실행하세요.
   CANCEL_MESSAGE : ✅ 취소되었습니다
-  NOTHING_CANCEL_MESSAGE : <i>취소할 것이 없습니다....</i>
-  START_DIALOG_MESSAGE : 새 대화를 시작합니다. ✅
+  NOTHING_CANCEL_MESSAGE: <i>취소할 것이 없습니다....</i>
+  START_DIALOG_MESSAGE : ✅ 새 대화를 시작합니다. 
