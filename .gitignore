@@ -135,3 +135,10 @@ config/config.env
 docker-compose.dev.yml
 
 mongodb/
+.idea/aws.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/telegram_chatgpt_bot.iml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/inspectionProfiles/Project_Default.xml
